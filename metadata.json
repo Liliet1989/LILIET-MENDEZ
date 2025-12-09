@@ -1,0 +1,9 @@
+{
+  "name": "TRIAJE IA-ASISTE · CHUC/HUNSC",
+  "description": "Sistema Inteligente de Valoración Inicial (MVP). Asistente de triaje médico con IA multimodal.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}
