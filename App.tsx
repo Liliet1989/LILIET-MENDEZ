@@ -5,6 +5,7 @@ import { ChatInterface } from './components/ChatInterface';
 import { LiveInterface } from './components/LiveInterface';
 import { GenerativeTools } from './components/GenerativeTools';
 import { GuidedTriage } from './components/GuidedTriage';
+import { ReferralSystem } from './components/ReferralSystem';
 
 const App: React.FC = () => {
   const [mode, setMode] = useState<AppMode>(AppMode.WELCOME);
@@ -64,11 +65,17 @@ const App: React.FC = () => {
                 <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
                 Voz (Live)
             </button>
-            <button 
+            <button
                 onClick={() => setMode(AppMode.TOOLS)}
                 className={`px-3 py-1 rounded text-sm ${mode === AppMode.TOOLS ? 'text-chuc-neon font-bold' : 'text-gray-400 hover:text-white'}`}
             >
                 Herramientas
+            </button>
+            <button
+                onClick={() => setMode(AppMode.REFERRAL)}
+                className={`px-3 py-1 rounded text-sm ${mode === AppMode.REFERRAL ? 'text-chuc-neon font-bold' : 'text-gray-400 hover:text-white'}`}
+            >
+                Interconsultas
             </button>
         </div>
       </header>
@@ -101,11 +108,17 @@ const App: React.FC = () => {
                     >
                         ● Modo guiado paso a paso
                     </button>
-                    <button 
+                    <button
                          onClick={() => setMode(AppMode.LIVE_TRIAJE)}
                          className="px-8 py-4 bg-transparent border-2 border-white/20 text-white font-bold text-lg rounded-full hover:bg-white/10 hover:border-white transition-all"
                     >
                         Modo Voz (Live)
+                    </button>
+                    <button
+                        onClick={() => setMode(AppMode.REFERRAL)}
+                        className="px-8 py-4 bg-chuc-blue border border-blue-400/50 text-blue-200 font-bold text-lg rounded-full hover:bg-blue-800/50 hover:text-white transition-all"
+                    >
+                        ↗ Interconsultas
                     </button>
                 </div>
                 
@@ -152,6 +165,12 @@ const App: React.FC = () => {
         {mode === AppMode.TOOLS && (
             <div className="h-full">
                 <GenerativeTools />
+            </div>
+        )}
+
+        {mode === AppMode.REFERRAL && (
+            <div className="h-full max-w-4xl mx-auto">
+                <ReferralSystem onBack={() => setMode(AppMode.WELCOME)} />
             </div>
         )}
 

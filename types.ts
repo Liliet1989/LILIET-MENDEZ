@@ -5,7 +5,28 @@ export enum AppMode {
   TOOLS = 'TOOLS',
   VIDEO_GEN = 'VIDEO_GEN',
   GUIDED = 'GUIDED',
-  KIOSK = 'KIOSK'
+  KIOSK = 'KIOSK',
+  REFERRAL = 'REFERRAL'
+}
+
+export type ReferralUrgency = 'URGENTE' | 'PREFERENTE' | 'NORMAL';
+export type ReferralStatus = 'BORRADOR' | 'ENVIADA' | 'ACEPTADA' | 'RESUELTA';
+
+export interface Referral {
+  id: string;
+  createdAt: Date;
+  status: ReferralStatus;
+  referringDoctor: string;
+  healthCenter: string;
+  patientAge: number;
+  patientSex: 'Hombre' | 'Mujer' | 'Otro';
+  patientSummary: string;
+  specialty: string;
+  urgency: ReferralUrgency;
+  reasonForReferral: string;
+  clinicalInfo: string;
+  aiSuggestedSpecialty?: string;
+  aiStructuredReferral?: string;
 }
 
 export interface SymptomCardData {
