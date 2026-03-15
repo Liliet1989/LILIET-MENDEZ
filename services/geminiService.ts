@@ -205,6 +205,77 @@ export const connectLiveSession = async (onMessage: (msg: LiveServerMessage) => 
     });
 };
 
+// --- Referral (Interconsulta) AI Service ---
+
+export const analyzeReferral = async (data: {
+  patientAge: number;
+  patientSex: string;
+  patientSummary: string;
+  reasonForReferral: string;
+  clinicalInfo: string;
+  requestedSpecialty: string;
+  urgency: string;
+}) => {
+  const prompt = `
+INTERCONSULTA ENTRE ATENCIÓN PRIMARIA Y HOSPITAL
+
+DATOS CLÍNICOS DEL PACIENTE:
+- Edad: ${data.patientAge} años | Sexo: ${data.patientSex}
+- Antecedentes relevantes: ${data.patientSummary || 'No especificados'}
+- Motivo de interconsulta: ${data.reasonForReferral}
+- Información clínica adicional: ${data.clinicalInfo || 'No especificada'}
+- Especialidad solicitada: ${data.requestedSpecialty}
+- Urgencia declarada: ${data.urgency}
+
+INSTRUCCIONES:
+Eres un sistema de apoyo para interconsultas hospitalarias del HUC (Hospital Universitario de Canarias).
+Analiza la derivación y genera:
+
+1. Valida si la especialidad solicitada es la más adecuada o sugiere otra.
+2. Evalúa si el nivel de urgencia es apropiado.
+3. Genera un texto de interconsulta estructurado listo para enviar al especialista.
+4. Indica qué pruebas complementarias deberían realizarse antes de la consulta (si procede).
+
+FORMATO DE RESPUESTA (Usa Markdown):
+
+### ✅ Especialidad recomendada
+[Especialidad o confirma la solicitada, con justificación breve]
+
+### ⏱️ Valoración de urgencia
+[Confirma o ajusta el nivel: URGENTE / PREFERENTE / NORMAL — con razón clínica]
+
+### 📋 Texto de interconsulta estructurado
+\`\`\`
+Paciente: [edad] años, [sexo]
+Antecedentes: [resumen]
+Motivo de consulta: [motivo claro y conciso]
+Exploración / datos relevantes: [info clínica]
+Solicitud: Se solicita valoración por [especialidad] por [razón].
+Urgencia: [nivel]
+\`\`\`
+
+### 🔬 Pruebas recomendadas antes de la consulta
+[Lista de pruebas complementarias, si aplica. Si no aplica, indicar "Ninguna específica"]
+
+### ⚠️ Alertas
+[Banderas rojas o aspectos a vigilar antes de la cita]
+
+---
+*Este análisis es de apoyo a la decisión clínica y no sustituye el criterio médico.*
+`;
+
+  return await ai.models.generateContent({
+    model: 'gemini-2.5-flash',
+    contents: prompt,
+    config: {
+      systemInstruction: `Eres un asistente clínico especializado en coordinación asistencial entre atención primaria y el hospital.
+Ayudas a médicos de primaria a redactar interconsultas claras, estructuradas y con la información necesaria para el especialista hospitalario.
+Respondes SIEMPRE en español. Eres preciso, clínico y conciso.`,
+      thinkingConfig: { thinkingBudget: 2048 },
+    },
+  });
+};
+
 // Utils for Audio
 export function floatTo16BitPCM(output: DataView, offset: number, input: Float32Array) {
     for (let i = 0; i < input.length; i++, offset += 2) {
